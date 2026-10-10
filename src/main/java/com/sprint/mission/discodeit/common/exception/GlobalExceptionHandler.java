@@ -4,10 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.event.Level;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.util.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -28,6 +31,31 @@ public class GlobalExceptionHandler {
                         exception.getExceptionClassName(),
                         exception.getHttpStatusCode()
                 ));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handle(MethodArgumentNotValidException exception) {
+        Map<String, Object> details = new LinkedHashMap<>();
+        for (FieldError fieldError : exception.getFieldErrors()) {
+            details.put(
+                    fieldError.getField(),
+                    fieldError.getRejectedValue()
+            );
+        }
+
+        int status = HttpStatus.BAD_REQUEST.value();
+        return ResponseEntity
+                .status(status)
+                .body(
+                        ErrorResponse.of(
+                                Instant.now(),
+                                "REQUEST_ARGUMENTS_VALIDATION_FAILED",
+                                exception.getMessage(),
+                                details,
+                                exception.getClass().getName(),
+                                status
+                        )
+                );
     }
 
     @ExceptionHandler(Exception.class)
