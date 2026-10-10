@@ -70,6 +70,9 @@ public class User extends BaseUpdatableEntity {
                     )
             );
         }
+        this.username = username;
+        this.email = email;
+        this.password = password;
         assignIfNotNull(profile, () -> this.profile = profile);
     }
 
