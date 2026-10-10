@@ -53,15 +53,6 @@ public class UserApiController {
         );
     }
 
-    /*
-    TODO
-    MultiPartFileUtil은 파일이 없거나 내용이 없으면 exception을 던지도록 설계함.
-    파일이 있어야 하든 없어야 하든 요구사항과 관계 없이 일단 예상하지 못헌 비정상적인 요청에 대비한 합리적인 설계라고 생각
-
-    근데 문제는 discodeit의 비즈니스 규칙을 보면 모든 생성,수정 시 binaryContent는 선택적으로 포함할 수 있도록 함
-    파일이 null이건 아니건 정상 요청으로 간주하도록 util을 설계하는건 찝찝한데
-    그렇다고 매번 중복되는 로직을 컨트롤러(UserApiController, MessageApiController)에 적는것도 비효율적이라고 생각.
-     */
     private CreateBinaryContentCommand createCommandIfNotNullOrElseGetNull(MultipartFile file) {
         return Objects.nonNull(file) ?
                 multiPartFileUtil.convert(file) : null;

@@ -1,9 +1,8 @@
 package com.sprint.mission.discodeit.adapter.in.controller.dto.channel;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
-
-public record PublicChannelCreateDto(@NotNull String name,
-                                     @NotNull String description) {
+public record PublicChannelCreateDto(@NotBlank String name,
+                                     @NotBlank String description) {
 
 }

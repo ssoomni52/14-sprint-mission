@@ -28,6 +28,7 @@ public class BinaryContentApiController {
         return binaryContentApplication.getBinaryContentInfo(binaryContentId);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{binaryContentId}/download")
     public ResponseEntity<?> downloadBinaryContent(@PathVariable UUID binaryContentId) {
         return binaryContentApplication.getBinaryContent(binaryContentId);
