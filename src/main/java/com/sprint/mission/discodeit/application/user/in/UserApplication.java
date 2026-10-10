@@ -2,6 +2,7 @@ package com.sprint.mission.discodeit.application.user.in;
 
 import com.sprint.mission.discodeit.application.user.UserService;
 import com.sprint.mission.discodeit.adapter.in.controller.multipart.CreateBinaryContentCommand;
+import com.sprint.mission.discodeit.common.log.MutationLog;
 import com.sprint.mission.discodeit.domain.binaryContent.BinaryContent;
 import com.sprint.mission.discodeit.application.readstatus.ReadStatusService;
 import com.sprint.mission.discodeit.domain.user.User;
@@ -23,6 +24,7 @@ public class UserApplication {
     private final ReadStatusService readStatusService;
     private final BinaryContentStorage binaryContentStorage;
 
+    @MutationLog
     @Transactional
     public UserDto createAccount(
             String username,
@@ -56,6 +58,7 @@ public class UserApplication {
         return UserDto.from(users);
     }
 
+    @MutationLog
     @Transactional
     public UserDto updateUser(UUID id,
                               @Nullable String username, @Nullable String email, @Nullable String password,
@@ -69,12 +72,14 @@ public class UserApplication {
         return UserDto.from(updated);
     }
 
+    @MutationLog
     @Transactional
     public void deleteAccount(UUID id) {
         readStatusService.deleteByUserId(id);
         userService.deleteById(id);
     }
 
+    @MutationLog
     @Transactional
     public UserStatusDto updateUserStatus(UUID id, Instant newLastActiveAt) {
         User updated = userService.updateNewLastActiveAt(id, newLastActiveAt);

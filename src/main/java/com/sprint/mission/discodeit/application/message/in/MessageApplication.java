@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.application.message.in;
 import com.sprint.mission.discodeit.application.message.MessageCreateService;
 import com.sprint.mission.discodeit.adapter.in.controller.multipart.CreateBinaryContentCommand;
 import com.sprint.mission.discodeit.application.channel.ChannelService;
+import com.sprint.mission.discodeit.common.log.MutationLog;
 import com.sprint.mission.discodeit.domain.message.Message;
 import com.sprint.mission.discodeit.application.message.MessageService;
 import com.sprint.mission.discodeit.adapter.in.controller.dto.common.PageResponse;
@@ -24,6 +25,7 @@ public class MessageApplication {
     private final ChannelService channelService;
     private final MessageCreateService messageCreateService;
 
+    @MutationLog
     @Transactional
     public MessageResponseDto createMessage(String content, UUID channelId, UUID userId,
                                             List<CreateBinaryContentCommand> createFileCommands) {
@@ -51,12 +53,14 @@ public class MessageApplication {
         );
     }
 
+    @MutationLog
     @Transactional
     public MessageResponseDto updateMessage(UUID id, String content) {
         Message updated = messageService.updateContent(id, content);
         return MessageResponseDto.of(updated);
     }
 
+    @MutationLog
     @Transactional
     public MessageResponseDto deleteMessage(UUID id) {
         Message deleted = messageService.deleteById(id);

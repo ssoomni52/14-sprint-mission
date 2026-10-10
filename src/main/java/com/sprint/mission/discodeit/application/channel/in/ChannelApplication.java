@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.application.channel.in;
 
+import com.sprint.mission.discodeit.common.log.MutationLog;
 import com.sprint.mission.discodeit.domain.user.User;
 import com.sprint.mission.discodeit.adapter.in.controller.dto.channel.ChannelUpsertResponse;
 import com.sprint.mission.discodeit.adapter.in.controller.dto.channel.ChannelResponseDto;
@@ -24,6 +25,7 @@ public class ChannelApplication {
     private final UserService userService;
     private final ReadStatusService readStatusService;
 
+    @MutationLog
     @Transactional
     public ChannelUpsertResponse createPublicChannel(String name, String description) {
         Channel creating = Channel.createPublicChannel(name, description);
@@ -31,6 +33,7 @@ public class ChannelApplication {
         return ChannelUpsertResponse.of(created);
     }
 
+    @MutationLog
     @Transactional
     public ChannelUpsertResponse createPrivateChannel(List<UUID> userIds) {
         List<User> users = userService.findByIds(userIds);
@@ -65,12 +68,14 @@ public class ChannelApplication {
                 .toList();
     }
 
+    @MutationLog
     @Transactional
     public ChannelUpsertResponse updateChannelName(UUID id, String name, String description) {
         Channel updated = channelService.updateNameAndDescription(id, name, description);
         return ChannelUpsertResponse.of(updated);
     }
 
+    @MutationLog
     @Transactional
     public void deleteChannel(UUID id) {
         // 채널 내부 message 삭제

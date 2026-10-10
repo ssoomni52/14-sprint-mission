@@ -3,6 +3,7 @@ package com.sprint.mission.discodeit.application.binarycontent.in;
 import com.sprint.mission.discodeit.adapter.in.controller.dto.binaryContent.BinaryContentResponseDto;
 import com.sprint.mission.discodeit.application.binarycontent.BinaryContentService;
 import com.sprint.mission.discodeit.application.binarycontent.out.BinaryContentStorage;
+import com.sprint.mission.discodeit.common.log.MutationLog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class BinaryContentApplication {
                 .toList();
     }
 
+    @MutationLog
     public ResponseEntity<?> getBinaryContent(UUID id) {
         BinaryContentResponseDto response = BinaryContentResponseDto.from(binaryContentService.findById(id));
         return binaryContentStorage.download(response);

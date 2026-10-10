@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.application.readstatus.in;
 
+import com.sprint.mission.discodeit.common.log.MutationLog;
 import com.sprint.mission.discodeit.domain.channel.Channel;
 import com.sprint.mission.discodeit.domain.readstatus.ReadStatus;
 import com.sprint.mission.discodeit.domain.user.User;
@@ -22,6 +23,7 @@ public class ReadStatusApplication {
     private final UserService userService;
     private final ChannelService channelService;
 
+    @MutationLog
     @Transactional
     public ReadStatusResponse create(UUID userId, UUID channelId, Instant lastReadAt) {
         User user = userService.findById(userId);
@@ -40,6 +42,7 @@ public class ReadStatusApplication {
                 .toList();
     }
 
+    @MutationLog
     public ReadStatusResponse updateReadStatus(UUID publicReadStatusId, Instant newLastReadAt) {
         ReadStatus updated = readStatusService.update(publicReadStatusId, newLastReadAt);
         return ReadStatusResponse.of(updated);
