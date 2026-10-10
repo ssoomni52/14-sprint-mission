@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -62,8 +63,14 @@ public class Channel extends BaseUpdatableEntity {
     }
 
     public Channel updateNameAndDescription(String name, String description) {
-        if(type.equals(ChannelType.PRIVATE)) {
-            throw new ChannelException(ChannelExceptionType.PRIVATE_CHANNEL_CANNOT_BE_MODIFIED);
+        if (type.equals(ChannelType.PRIVATE)) {
+            throw new ChannelException(
+                    ChannelExceptionType.PRIVATE_CHANNEL_CANNOT_BE_MODIFIED,
+                    Map.of(
+                            "id", this.getId(),
+                            "channelType", this.getType()
+                    )
+            );
         }
         this.name = name;
         this.description = description;

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -34,7 +35,13 @@ public class MessageCreateService {
         Channel channel = channelService.findById(channelId);
 
         if (channel.isPrivate() && !readStatusService.existsByUserAndChannel(userId, channelId)) {
-            throw new ChannelException(ChannelExceptionType.NO_ACCESS_TO_CHANNEL);
+            throw new ChannelException(
+                    ChannelExceptionType.NO_ACCESS_TO_CHANNEL,
+                    Map.of(
+                            "channel", channelId,
+                            "userId", userId
+                    )
+            );
         }
 
         List<BinaryContent> createdAttachments = createFiles(createFileCommands);

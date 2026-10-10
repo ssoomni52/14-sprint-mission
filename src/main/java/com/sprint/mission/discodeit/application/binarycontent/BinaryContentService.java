@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -17,7 +18,10 @@ public class BinaryContentService {
 
     public BinaryContent findById(UUID id) {
         return binaryContentRepository.findById(id)
-                .orElseThrow(() -> new BinaryContentException(BinaryContentExceptionType.BINARY_CONTENT_NOT_FOUND));
+                .orElseThrow(() -> new BinaryContentException(
+                        BinaryContentExceptionType.BINARY_CONTENT_NOT_FOUND,
+                        Map.of("id", id)
+                ));
     }
 
     public List<BinaryContent> findAllById(List<UUID> ids) {

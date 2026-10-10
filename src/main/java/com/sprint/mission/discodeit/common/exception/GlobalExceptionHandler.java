@@ -5,8 +5,9 @@ import org.slf4j.event.Level;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.Instant;
 
 @Slf4j
 @RestControllerAdvice
@@ -18,16 +19,32 @@ public class GlobalExceptionHandler {
                 .setCause(exception)
                 .log("[{}]: {}", exception.getTitle(), exception.getDescription());
         return ResponseEntity
-                .status(exception.getHttpStatus())
-                .body(ErrorResponse.of(exception.getDescription()));
+                .status(exception.getHttpStatusCode())
+                .body(ErrorResponse.of(
+                        exception.getTimestamp(),
+                        exception.getExceptionTypeName(),
+                        exception.getDescription(),
+                        exception.getDetails(),
+                        exception.getExceptionClassName(),
+                        exception.getHttpStatusCode()
+                ));
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ErrorResponse handle(Exception exception) {
+    public ResponseEntity<ErrorResponse> handle(Throwable throwable) {
         log.makeLoggingEventBuilder(Level.ERROR)
-                .setCause(exception)
+                .setCause(throwable)
                 .log("의도하지 않은 오류 발생");
-        return ErrorResponse.of("오류가 발생했습니다. 잠시 후 다시 시도해주세요");
+        int status = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        return ResponseEntity
+                .status(status)
+                .body(ErrorResponse.of(
+                        Instant.now(),
+                        throwable.getClass().getName(),
+                        throwable.getMessage(),
+                        null,
+                        null,
+                        status
+                ));
     }
 }

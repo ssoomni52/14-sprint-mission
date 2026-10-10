@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,7 +22,10 @@ public class ChannelService {
 
     public Channel findById(UUID id) {
         return channelRepository.findById(id)
-                .orElseThrow(() -> new ChannelException(ChannelExceptionType.CHANNEL_NOT_FOUND_IN_DATABASE));
+                .orElseThrow(() -> new ChannelException(
+                        ChannelExceptionType.CHANNEL_NOT_FOUND_IN_DATABASE,
+                        Map.of("id", id)
+                ));
     }
 
     public List<Channel> findAccessibleByUserId(UUID userId) {
@@ -40,7 +44,10 @@ public class ChannelService {
 
     public void validateExists(UUID id) {
         if (!channelRepository.existsById(id)) {
-            throw new ChannelException(ChannelExceptionType.CHANNEL_NOT_FOUND_IN_DATABASE);
+            throw new ChannelException(
+                    ChannelExceptionType.CHANNEL_NOT_FOUND_IN_DATABASE,
+                    Map.of("id", id)
+            );
         }
     }
 }

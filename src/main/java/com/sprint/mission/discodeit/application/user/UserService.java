@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -25,7 +27,11 @@ public class UserService {
 
     public User findById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserException(UserExceptionType.USER_NOT_FOUND));
+                .orElseThrow(() -> new UserException(
+                                UserExceptionType.USER_NOT_FOUND,
+                                Map.of("id", id)
+                        )
+                );
     }
 
     public List<User> findByIds(List<UUID> userIds) {
@@ -44,7 +50,14 @@ public class UserService {
     public User findByNameAndPassword(String name, String password) {
         validateExistsByName(name);
         return userRepository.findByUsernameAndPassword(name, password)
-                .orElseThrow(() -> new UserException(UserExceptionType.LOGIN_FAILED));
+                .orElseThrow(() -> new UserException(
+                                UserExceptionType.LOGIN_FAILED,
+                                Map.of(
+                                        "name", name,
+                                        "password", password
+                                )
+                        )
+                );
     }
 
     public User update(User updating, String username, String email, String password, @Nullable BinaryContent profile) {
@@ -60,28 +73,46 @@ public class UserService {
 
     public void validateExistsById(UUID id) {
         if (!userRepository.existsById(id)) {
-            throw new UserException(UserExceptionType.USER_NOT_FOUND);
+            throw new UserException(UserExceptionType.USER_NOT_FOUND, Map.of("id", id));
         }
     }
 
     private void validateExistsByName(String name) {
-        if(!userRepository.existsByUsername(name)) {
-            throw new UserException(UserExceptionType.USER_NOT_FOUND);
+        if (!userRepository.existsByUsername(name)) {
+            throw new UserException(UserExceptionType.USER_NOT_FOUND, Map.of("name", name));
         }
     }
 
     private void validateNameAndEmailAvailable(String name, String email) {
         if (userRepository.existsByUsernameOrEmail(name, email)) {
-            throw new UserException(UserExceptionType.USER_UNIQUE_FIELD_CONFLICT);
+            throw new UserException(
+                    UserExceptionType.USER_UNIQUE_FIELD_CONFLICT,
+                    Map.of(
+                            "name,", name,
+                            "email", email
+                    )
+            );
         }
     }
 
     private void validateUsernameAndEmailAvailableWhereUserNot(String username, String email, UUID id) {
-        if(userRepository.existsByUsernameAndIdNot(username, id)) {
-            throw new UserException(UserExceptionType.USER_UNIQUE_FIELD_CONFLICT);
+        if (userRepository.existsByUsernameAndIdNot(username, id)) {
+            throw new UserException(
+                    UserExceptionType.USER_UNIQUE_FIELD_CONFLICT,
+                    Map.of(
+                            "username", username,
+                            "id", id
+                    )
+            );
         }
         if (userRepository.existsByEmailAndIdNot(email, id)) {
-            throw new UserException(UserExceptionType.USER_UNIQUE_FIELD_CONFLICT);
+            throw new UserException(
+                    UserExceptionType.USER_UNIQUE_FIELD_CONFLICT,
+                    Map.of(
+                            "email", email,
+                            "id", id
+                    )
+            );
         }
     }
 

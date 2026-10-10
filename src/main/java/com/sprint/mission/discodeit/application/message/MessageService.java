@@ -28,7 +28,11 @@ public class MessageService {
 
     public Message findById(UUID id) {
         return messageRepository.findById(id)
-                .orElseThrow(() -> new MessageException(MessageExceptionType.MESSAGE_NOT_FOUND));
+                .orElseThrow(() -> new MessageException(
+                                MessageExceptionType.MESSAGE_NOT_FOUND,
+                                Map.of("id", id)
+                        )
+                );
     }
 
     public Slice<Message> findAllByChannelId(UUID channelId, Instant cursor, Pageable pageable) {

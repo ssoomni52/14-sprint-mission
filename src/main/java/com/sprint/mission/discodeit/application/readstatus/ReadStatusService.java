@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -28,7 +29,10 @@ public class ReadStatusService {
 
     public ReadStatus findById(UUID id) {
         return readStatusRepository.findById(id)
-                .orElseThrow(() -> new ReadStatusException(ReadStatusExceptionType.READ_STATUS_NOT_FOUND));
+                .orElseThrow(() -> new ReadStatusException(
+                        ReadStatusExceptionType.READ_STATUS_NOT_FOUND,
+                        Map.of("id", id)
+                ));
     }
 
     public boolean existsByUserAndChannel(UUID userId, UUID channelId) {
@@ -63,8 +67,16 @@ public class ReadStatusService {
     }
 
     private void validateUserAndChannelAvailable(ReadStatus readStatus) {
-        if (readStatusRepository.existsByUser_IdAndChannel_Id(readStatus.getUserId(), readStatus.getChannelId())) {
-            throw new ReadStatusException(ReadStatusExceptionType.READ_STATUS_ALREADY_EXISTS);
+        UUID userId = readStatus.getUserId();
+        UUID channelId = readStatus.getUserId();
+        if (readStatusRepository.existsByUser_IdAndChannel_Id(userId, channelId)) {
+            throw new ReadStatusException(
+                    ReadStatusExceptionType.READ_STATUS_ALREADY_EXISTS,
+                    Map.of(
+                            "userId", userId,
+                            "channelId", channelId
+                    )
+            );
         }
     }
 
