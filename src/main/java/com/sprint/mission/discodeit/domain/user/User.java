@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -59,9 +60,16 @@ public class User extends BaseUpdatableEntity {
 
     public User(String username, String email, String password, @Nullable BinaryContent profile) {
         super();
-        validateNotNullAndThenAssign(username, () -> this.username = username);
-        validateNotNullAndThenAssign(email, () -> this.email = email);
-        validateNotNullAndThenAssign(password, () -> this.password = password);
+        if (Objects.isNull(username) || Objects.isNull(email) || Objects.isNull(password)) {
+            throw new UserException(
+                    UserExceptionType.USER_MISSING_UPSERT_ARGUMENT,
+                    Map.of(
+                            "username", username,
+                            "email", email,
+                            "password", password
+                    )
+            );
+        }
         assignIfNotNull(profile, () -> this.profile = profile);
     }
 
@@ -73,12 +81,6 @@ public class User extends BaseUpdatableEntity {
         return this;
     }
 
-    private <T> void validateNotNullAndThenAssign(T t, Runnable runnable) {
-        if (Objects.isNull(t)) {
-            throw new IllegalArgumentException("User를 생성/갱신하려면 name, email, password 반드시 필요");
-        }
-        runnable.run();
-    }
 
     private <T> void assignIfNotNull(T t, Runnable runnable) {
         if (Objects.nonNull(t)) {
