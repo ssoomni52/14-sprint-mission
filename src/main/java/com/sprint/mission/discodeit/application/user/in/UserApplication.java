@@ -65,8 +65,7 @@ public class UserApplication {
                               CreateBinaryContentCommand createProfileCommand) {
 
         BinaryContent createdProfile = createProfile(createProfileCommand);
-        User updating = userService.findById(id);
-        User updated = userService.update(updating, username, email, password, createdProfile);
+        User updated = userService.update(id, username, email, password, createdProfile);
         userService.flush();
         saveCreatedProfile(createProfileCommand, createdProfile);
         return UserDto.from(updated);

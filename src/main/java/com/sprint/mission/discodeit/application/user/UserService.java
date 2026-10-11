@@ -59,8 +59,9 @@ public class UserService {
                 );
     }
 
-    public User update(User updating, String username, String email, String password, @Nullable BinaryContent profile) {
-        validateUsernameAndEmailAvailableWhereUserNot(username, email, updating.getId());
+    public User update(UUID id, String username, String email, String password, @Nullable BinaryContent profile) {
+        validateUsernameAndEmailAvailableWhereUserNot(username, email, id);
+        User updating = findById(id);
         return updating.update(username, email, password, profile);
     }
 
