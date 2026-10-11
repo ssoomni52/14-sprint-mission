@@ -210,6 +210,16 @@ class UserApplicationTest {
         verifyNoInteractions(binaryContentStorage);
     }
 
+    @Test
+    @DisplayName("User 삭제 성공 시, User/ReadStatus 삭제")
+    void givenUserId_whenDeleteById_thenDeleteUserAndReadStatus() {
+        UUID userId = UUID.randomUUID();
+
+        userApplication.deleteAccount(userId);
+
+        verify(readStatusService).deleteByUserId(userId);
+        verify(userService).deleteById(userId);
+    }
 
     private CreateBinaryContentCommand createBinaryContentCommand() {
         return CreateBinaryContentCommand.of(
