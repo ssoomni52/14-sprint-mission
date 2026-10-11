@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class ReadStatusRepositoryImpl implements ReadStatusRepositoryCustom {
+public class ReadStatusRepositoryCustomImpl implements ReadStatusRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     private static final QReadStatus readStatus = QReadStatus.readStatus;

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class ChannelRepositoryImpl implements ChannelRepositoryCustom {
+public class ChannelRepositoryCustomImpl implements ChannelRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QChannel channel = QChannel.channel;
 
