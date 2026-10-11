@@ -70,6 +70,28 @@ class UserApplicationTest {
     }
 
     @Test
+    @DisplayName("프로필 요청이 null일 때, User 생성 성공 시, 생성 정보만을 반환한다.")
+    void givenNullProfile_whenCreateUser_thenOnlyReturnSavedUser() {
+        String username = "test";
+        String email = "test@gmail.com";
+        String password = "1234";
+        CreateBinaryContentCommand command = null;
+
+        when(userService.create(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // when
+        UserDto created = userApplication.createAccount(username, email, password, command);
+
+        // then
+        assertThat(created.username()).isEqualTo(username);
+        assertThat(created.email()).isEqualTo(email);
+
+        verify(userService).create(any(User.class));
+        verifyNoInteractions(binaryContentStorage);
+    }
+
+    @Test
     @DisplayName("User 생성 실패 시, 예외를 던지고 프로필을 저장하지 않는다.")
     void whenCreateFailed_thenThrowException() {
         String username = "test";
